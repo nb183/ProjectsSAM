@@ -24,7 +24,7 @@ public class HeapAnalysis {
 
         Scene.v().loadNecessaryClasses();
 
-        // Force-load specific test classes (if required)
+        // We can, as per our requirements, force-load specific test classes
         Scene.v().addBasicClass("org.example.classes.Base", SootClass.BODIES);
 
         // Load all application classes
