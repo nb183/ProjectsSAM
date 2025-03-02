@@ -3,7 +3,7 @@ package org.example.classes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SootAccount {
+public class TestSoot {
 
     // Instance fields => heap storage
     private final String name;
@@ -20,7 +20,7 @@ public class SootAccount {
     private final List<String> transactionHistory;
 
     // Constructor for initialization
-    public SootAccount(String name, int age, double initialBalance) {
+    public TestSoot(String name, int age, double initialBalance) {
         this.name = name;
         this.age = age;
         this.balance = initialBalance;
@@ -63,8 +63,8 @@ public class SootAccount {
 
     public static void main(String[] args) {
         // Heap object creation
-        SootAccount user1 = new SootAccount("User1",  17, 5000);
-        SootAccount user2 = new SootAccount("User2", 23, 3000);
+        TestSoot user1 = new TestSoot("User1",  17, 5000);
+        TestSoot user2 = new TestSoot("User2", 23, 3000);
 
         // Performing operations => heap interactions
         user1.deposit(3000);
@@ -76,7 +76,7 @@ public class SootAccount {
         user2.displayAccountDetails(); // Heap reads
 
         // Changing static field => this affects all instances
-        SootAccount.changeBankName("Wichita Bank");
+        TestSoot.changeBankName("Wichita Bank");
         user1.displayAccountDetails(); // Heap read => new static field value
         user2.displayAccountDetails(); // Heap read => new static field value
     }
