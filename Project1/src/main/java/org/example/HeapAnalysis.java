@@ -17,15 +17,18 @@ public class HeapAnalysis {
         Options.v().set_allow_phantom_refs(true);
         Options.v().set_output_format(Options.output_format_jimple);
         Options.v().set_verbose(false);
+
+        // False handles the intra procedural analysis rather than the whole program analysis
         Options.v().set_whole_program(false);
 
-
-        Options.v().set_process_dir(Collections.singletonList("target/classes"));
+        // Set default target classes directory if not provided as argument
+        String classesDirectory = args.length > 0 ? args[0] : "target/classes/org/example/classes";
+        Options.v().set_process_dir(Collections.singletonList(classesDirectory));
 
         Scene.v().loadNecessaryClasses();
 
         // We can, as per our requirements, force-load specific test classes
-        Scene.v().addBasicClass("org.example.classes.Base", SootClass.BODIES);
+        Scene.v().addBasicClass("org.example.classes.SootAccount", SootClass.BODIES);
 
         // Load all application classes
         for (SootClass sc : Scene.v().getApplicationClasses()) {
@@ -36,7 +39,8 @@ public class HeapAnalysis {
             for (SootMethod method : sc.getMethods()) {
                 if (!method.isConcrete()) continue;
 
-                System.out.println("Analyze method: " + method.getSignature());
+                System.out.println("\nAnalyze method: " + method.getSignature());
+                System.out.println("-".repeat(100));
 
                 // Retrieve Jimple method body
                 Body body = method.retrieveActiveBody();
@@ -57,15 +61,16 @@ public class HeapAnalysis {
 
                         // Perform check for heap write and read
                         if (lhs instanceof InstanceFieldRef || lhs instanceof StaticFieldRef || lhs instanceof ArrayRef ){
-                            System.out.println(stmt + ", " + "HEAP_WRITE");
+                            System.out.println(stmt + " ===> " + "HEAP_WRITE");
                         }
 
                         if (rhs instanceof InstanceFieldRef || rhs instanceof StaticFieldRef || rhs instanceof ArrayRef ){
-                            System.out.println(stmt + ", " + "HEAP_READ");
+                            System.out.println(stmt + " ===> " + "HEAP_READ");
                         }
                     }
                 }
             }
+            System.out.println();
         }
     }
 }
