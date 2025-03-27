@@ -54,7 +54,7 @@ public class TestSoot {
         System.out.println("Age: " + age); // Heap read => InstanceFieldRef
         System.out.println("Balance: $" + balance); // Heap read => InstanceFieldRef
         System.out.println("Bank Name: " + bankName); // Heap read => StaticFieldRef
-        System.out.println("Transaction History: " + transactionHistory); // Heap read => ArrayRef & List
+        System.out.println("Transaction History: " + transactionHistory); // Heap read => ArrayRef and List
     }
 
     public static void changeBankName(String newBankName) {
