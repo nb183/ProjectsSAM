@@ -1,10 +1,10 @@
 package org.example;
+
 import soot.*;
 import soot.options.Options;
 import soot.Scene;
 import soot.PackManager;
 import soot.Transform;
-
 import java.util.Collections;
 
 public class ReachingDefinitionAnalysis {

@@ -47,6 +47,7 @@ public class ReachingDefinitions
         if (unit instanceof DefinitionStmt defStmt) {
             Value leftOp = defStmt.getLeftOp();
             if (leftOp instanceof Local) {
+
                 // Removing previous definitions of the same local variable
                 FlowSet<Unit> toKill = new ArraySparseSet<>();
                 for (Unit u : in) {
