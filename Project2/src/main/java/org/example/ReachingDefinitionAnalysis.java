@@ -25,19 +25,10 @@ public class ReachingDefinitionAnalysis {
                 : "target/classes/org/example/classes";
         Options.v().set_process_dir(Collections.singletonList(classesDir));
 
-        // keep debug names
-        Options.v().setPhaseOption("jb",  "use-original-names:true");
 
-        // turn OFF every constant‑prop / folding phase
-        Options.v().setPhaseOption("jb.cp", "enabled:false");   // in jb
-        Options.v().setPhaseOption("jj",    "enabled:false");   // the whole jj pack
-        Options.v().setPhaseOption("jtp.cpf", "enabled:false");   // turn off constant folder
-        Options.v().setPhaseOption("jop",   "enabled:false");   // later jimple‑opt pack
-        Options.v().setPhaseOption("wjpp",  "enabled:false");   // whole‑prog jimple‑opt
-        Options.v().setPhaseOption("wjtp",  "enabled:false");   // whole‑prog transform
-
-
-        Options.v().set_keep_line_number(true);   // optional: keep line tags
+        // Preserve all original variable names
+        Options.v().setPhaseOption("jb", "use-original-names:true");
+        Options.v().set_keep_line_number(true);
 
         Scene.v().loadNecessaryClasses();
 
@@ -51,9 +42,5 @@ public class ReachingDefinitionAnalysis {
         PackManager.v().runPacks();
     }
 }
-
-
-
-
 
 
