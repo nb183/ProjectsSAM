@@ -1,15 +1,16 @@
 package org.example;
 
-import soot.Local;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.DefinitionStmt;
+import soot.Local;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArraySparseSet;
-import soot.toolkits.scalar.BackwardFlowAnalysis;
 import soot.toolkits.scalar.FlowSet;
+import soot.toolkits.scalar.ForwardFlowAnalysis;
 
-class ReachingDefinitions extends BackwardFlowAnalysis<Unit, FlowSet<Local>> {
+public class ReachingDefinitions
+        extends ForwardFlowAnalysis<Unit, FlowSet<Unit>> {
 
     public ReachingDefinitions(UnitGraph graph) {
         super(graph);
@@ -17,49 +18,47 @@ class ReachingDefinitions extends BackwardFlowAnalysis<Unit, FlowSet<Local>> {
     }
 
     @Override
-    protected FlowSet<Local> newInitialFlow() {
+    protected FlowSet<Unit> newInitialFlow() {
         return new ArraySparseSet<>();
     }
 
     @Override
-    protected FlowSet<Local> entryInitialFlow() {
+    protected FlowSet<Unit> entryInitialFlow() {
         return new ArraySparseSet<>();
     }
 
-
     @Override
-    protected void merge(FlowSet<Local> in1, FlowSet<Local> in2, FlowSet<Local> out) {
+    protected void merge(FlowSet<Unit> in1, FlowSet<Unit> in2,
+                         FlowSet<Unit> out) {
         in1.union(in2, out);
     }
 
     @Override
-    protected void copy(FlowSet<Local> source, FlowSet<Local> dest) {
-        source.copy(dest);
+    protected void copy(FlowSet<Unit> src, FlowSet<Unit> dest) {
+        src.copy(dest);
     }
 
     @Override
-    protected void flowThrough(FlowSet<Local> in, Unit unit, FlowSet<Local> out) {
+    protected void flowThrough(FlowSet<Unit> in, Unit unit,
+                               FlowSet<Unit> out) {
         // Implementing the actual flow logic
-        out.clear();
-        out.union(in);
+        in.copy(out);
 
         if (unit instanceof DefinitionStmt defStmt) {
             Value leftOp = defStmt.getLeftOp();
-
-            if (leftOp instanceof Local local) {
-
+            if (leftOp instanceof Local) {
                 // Removing previous definitions of the same local variable
-                FlowSet<Local> temp = new ArraySparseSet<>();
-                for (Local l : out) {
-                    if (!l.equals(local)) {
-                        temp.add(l);
+                FlowSet<Unit> toKill = new ArraySparseSet<>();
+                for (Unit u : in) {
+                    DefinitionStmt d = (DefinitionStmt) u;
+                    if (d.getLeftOp().equivTo(leftOp)) {
+                        toKill.add(u);
                     }
                 }
-                out.clear();
+                out.difference(toKill, out);
 
                 // Adding the new variables to the out set
-                out.union(temp);
-                out.add(local);
+                out.add(unit);
             }
         }
     }
